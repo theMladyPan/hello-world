@@ -1,0 +1,8 @@
+@ webpage: http://www.learncpp.com/cpp-tutorial/210-comprehensive-quiz/
+
+//Make a program which do following:
+
+Enter a double value: 7
+Enter a second double value: 5
+Enter one of the following: +, -, *, or /: *
+7 * 5 is 35
