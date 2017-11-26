@@ -20,5 +20,3 @@ int main(int argc, char ** argv){
 	second.join();
 	return 0;
 	}
-
-

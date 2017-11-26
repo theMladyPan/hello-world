@@ -27,7 +27,7 @@ double element(uint32_t i) { //function to calculate next iteration
   return ( 4*pow(-1,i)/ ((i)*(i+1)*(i+2)) );
 }
 
-void worker(std::mutex *mux, std::queue<double> *reg, const double precision){
+void worker(std::mutex *mux, std::queue<double> *reg, const double precision, char verbose){
   uint64_t local_it;
 
   double e;
@@ -40,7 +40,7 @@ void worker(std::mutex *mux, std::queue<double> *reg, const double precision){
   e=element(local_it);
   mux->lock();
   reg->push(e);
-  std::cout << "e: "<<e<<", p: "<<precision<< '\n';
+  if(verbose)std::cout << "e: "<<e<<", p: "<<precision<< '\n';
   mux->unlock();
 
 } while(abs(e)>precision);
@@ -54,6 +54,10 @@ int main(int argc, const char ** argv) {
 	const std::string exe_name = argv[0];
 	args.assign(argv+1, argv+argc);
 
+  char verbose = 0;
+  double element;
+  double pi=3;
+
   uint8_t cpu_count=1, dec_places=2;
 
 	for(std::vector<std::string>::iterator it = args.begin();it!=args.end();it++){ //iterate throught all arguments
@@ -64,6 +68,9 @@ int main(int argc, const char ** argv) {
 		else if(*it=="-p" || *it == "--precision"){
 			dec_places = atoi((*(++it)).c_str());
 			}
+    else if(*it=="-v" || *it == "--verbose"){
+      verbose = 1;
+    }
 		else{
 			std::cerr<<"Invalid argument: "<<*it<<std::endl;
 			return 1;
@@ -74,13 +81,20 @@ int main(int argc, const char ** argv) {
 
   std::vector<std::thread> threads;//(cpu_count, std::thread(worker, mux, reg)); //vytvor "cpu_count" vlakien kt. budu vykonavat "worker" s arg. "reg"
   for(uint8_t i=0;i<8;i++){
-    threads.push_back(std::thread(worker, mux, reg, precision));
+    threads.push_back(std::thread(worker, mux, reg, precision, verbose));
     threads.back().detach();
   }
 
   if(threads.back().joinable())threads.back().join();
-  usleep(1000000); //sleep for 100ms
+  usleep(10000); //sleep for 10ms
+  do{
+    element=reg->front();
+    reg->pop();
+    pi+=element;
+    if(verbose)std::cout << "Current Pi value: "<<pi<<std::endl;
+  }while(reg->size()>0);
   std::cout <<"size: "<<threads.size() << '\n';
   std::cout << "iterations:" <<it<< '\n';
+  std::cout << "Pi value: "<<pi<<std::endl;
   return 0;
 }
