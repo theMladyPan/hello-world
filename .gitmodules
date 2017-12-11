@@ -1,0 +1,3 @@
+[submodule "color_class"]
+	path = color_class
+	url = https://github.com/theMladyPan/color_class.git
