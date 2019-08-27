@@ -263,6 +263,13 @@ fi
 ```
 now you should see only relevant information without statistics
 
+## To do
+* functions
+* loops
+* case/switch
+* history
+* arrays
+* dictionaries
 
 ## Sources
 based on:
