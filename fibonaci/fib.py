@@ -6,5 +6,5 @@ def fib(n):
 	else:
 		return 0;
 		
-for i in range(10000):
+for _ in range(10000):
 	a= fib(100)
